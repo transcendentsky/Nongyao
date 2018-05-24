@@ -4,10 +4,21 @@ from .hero import *
 
 
 class Ake(Hero):
-    def __init__(self, level=1, equips=[], skills=[0, 0, 0]):
+    def __init__(self, level=1, equips=[]):
         super(Ake, self).__init__()
         self.basic_init_ake()
         # Skill Add points
+        skills = [0,0,0]
+        def addpoints():
+            for _ in range(level):
+                if skills[2] < (level)//4 and skills[2] < 3:
+                    skills[2] += 1
+                elif skills[1] < (level+1)//2 and skills[1] < 6:
+                    skills[1] += 1
+                else:
+                    skills[0] += 1
+            assert sum(skills) == level, "Add points Wrong..."
+        addpoints()
         self.skill_1 = Skill(skills[0])
         self.skill_2 = Skill(skills[1])
         self.skill_ult = Skill(skills[2])

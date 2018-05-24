@@ -1,8 +1,7 @@
 from __future__ import print_function
 import numpy as np
 
-verbose = False
-
+verbose = True
 
 def verbose_print(*args, **kwargs):
     if verbose:
@@ -84,6 +83,9 @@ class Hero(object):
         self.physical_vampire = 0
         self.magic_vampire = 0
 
+        # Magic shield
+        self.magic_sheild = 0
+
         # Skills
         # self.skill_1 = Skill()
         # self.skill_2 = Skill()
@@ -107,7 +109,7 @@ class Hero(object):
                       "Max HP ({} + {}),  Max MP ({} + {}),\n "
                       "Armor ({} + {}),  Spell_resis ({} + {})\n"
                       "Critical {}, {}%\n"
-                      "Penetration {}, {}%".format(self.level,
+                      "Penetration {}, {}%\n".format(self.level,
                                                    self.attack, self.exattack, self.attack_speed,
                                                    self.max_hp, self.ex_max_hp, self.max_mp, self.ex_max_mp,
                                                    self.armor, self.exarmor, self.spell_resistance, self.exspell_resis,
@@ -164,6 +166,14 @@ class Hero(object):
 
     def set_level(self, level):
         self.level = level
+        return level
+
+    def set_hp(self, hp=-1, percent=1.0):
+        if hp >= 0:
+            self.hp = hp
+        else:
+            self.hp = percent * (self.max_hp + self.ex_max_hp)
+        return self.hp
 
     def add_equips(self, xs):
         ll("add equips?? xs = {}".format(xs))
@@ -235,7 +245,94 @@ class Hero(object):
             verbose_print("[Equip] Bujiaxie")
             self.exarmor += 110
             self.bujiaxie_buff = True
+        elif x == 12:  #
+            verbose_print("[Equip] HonglianDoupeng")
+            self.exarmor += 240
+            self.ex_max_hp += 1000
+        elif x == 13:
+            """Bazhezhongzhuang"""
+            self.ex_max_hp += 2000
+        elif x == 14:
+            """buxiangzhengzhao"""
+            self.exarmor += 270
+            self.ex_max_hp += 1200
+        elif x == 15:
+            """fanjia"""
+            self.exarmor += 420
+            self.exattack += 40
+        elif x == 16:
+            """Jihanpengbao"""
+            self.exarmor += 360
+            self.ex_max_mp += 500
+            self.cd += 0.2
+        elif x == 17:
+            """baoliekaijia"""
+            self.exarmor += 220
+            self.ex_max_hp += 1000
+        elif x == 18:
+            """BingHenzhiwo"""
+            self.exarmor += 200
+            self.ex_max_hp += 800
+            self.ex_max_mp += 500
+            self.cd += 0.1
 
+        elif x == 21:
+            """Businaio"""
+            self.exspell_resis += 240
+            self.ex_max_hp += 1200
+        elif x == 22:
+            """Monv"""
+            self.exspell_resis += 360
+            self.ex_max_hp += 1000
+            self.magic_sheild += 1400  # 200 + 100*lv
+
+        elif x == 31:
+            """HuiXiang"""
+            self.expower += 240
+
+            def huixiang_f(hero):
+                return (hero.power + hero.expower) * 0.5 + 50
+
+            self.equips_funcs.update({'huixiang_f': huixiang_f})
+        elif x == 32:
+            """maozi"""
+            self.expower += 240
+            self.expower += 0.35 * (self.power + self.expower)
+            print("Maozi +power, {} + {}".format(240, 0.35 * (self.power + self.expower)))
+            def maozi_f(hero):
+                hero.expower += 0.35 * (hero.power + hero.expower)
+                return 0
+
+            self.equips_funcs.update({'maozi_f': maozi_f})
+        elif x == 33:
+            """mianju"""
+            self.expower += 140
+            self.cd += 0.05
+            self.ex_max_hp += 500
+            self.magic_penetration += 75
+            def mianju_f(hero, enemy):
+                return enemy.hp * 0.08
+            self.equips_funcs.update({'mianju': mianju_f})
+        elif x == 34:
+            """xueshu"""
+            self.expower += 180
+            self.cd += 0.1
+            self.ex_max_hp += 800
+            self.magic_vampire += 0.25
+        elif x == 35:
+            """huiyue"""
+            self.expower += 160
+            self.cd += 0.1
+        elif x == 36:
+            """Dashu"""
+            self.expower += 400
+            self.ex_max_hp += 1400
+
+        elif x == 37:
+            """Fachuanzhang"""
+            self.expower += 180
+            self.ex_max_hp += 500
+            self.magic_penetration_percent += 0.45
 
 class Skill(object):
     def __init__(self, level=0):
@@ -262,10 +359,12 @@ class Skill(object):
             if ex:
                 return self.trigger_times * (self.base_damage +
                                              (self.skill_level - 1) * self.addition_by_skill_level +
+                                             (hero.power+hero.expower)*self.addition_by_power +
                                              hero.exattack * self.addition_by_attack)
             else:
                 return self.trigger_times * (self.base_damage +
                                              (self.skill_level - 1) * self.addition_by_skill_level +
+                                             (hero.power + hero.expower) * self.addition_by_power +
                                              hero.attack * self.addition_by_attack)
                 # Not implement Magic Damge
 

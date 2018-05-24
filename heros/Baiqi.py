@@ -3,11 +3,11 @@ import numpy as np
 from .hero import Hero
 
 
-class Houyi(Hero):
+class Baiqi(Hero):
     def __init__(self, level=1, equips=[]):
-        super(Houyi, self).__init__()
-        self.attack_1 = 161
-        self.attck_15 = 396
+        super(Baiqi, self).__init__()
+        self.attack_1 = 158
+        self.attck_15 = 288
         self.attack_inc = 0
 
         self.spell_power = 0
@@ -19,16 +19,16 @@ class Houyi(Hero):
 
         self.speed = 360
 
-        self.max_hp_1 = 3182
-        self.max_hp_15 = 5986
+        self.max_hp_1 = 3113
+        self.max_hp_15 = 7661
         self.hp_inc = 0
 
-        self.max_mp_1 = 1784
-        self.max_mp_15 = 0
+        self.max_mp_1 = 420
+        self.max_mp_15 = 1666
         self.mp_inc = 0
 
-        self.armor_1 = 86
-        self.armor_15 = 336
+        self.armor_1 = 98
+        self.armor_15 = 350
         self.armor_inc = 0
 
         self.spell_resis_1 = 50

@@ -3,19 +3,34 @@ import numpy as np
 from .hero import *
 
 
-class Ake(Hero):
-    def __init__(self, level=1, equips=[], skills=[0, 0, 0]):
-        super(Ake, self).__init__()
-        self.basic_init_ake()
+class Zhuge(Hero):
+    def __init__(self, level=1, equips=[]):
+        super(Zhuge, self).__init__()
+        self.basic_init()
         # Skill Add points
-        self.skill_1 = Skill(skills[0])
-        self.skill_2 = Skill(skills[1])
+        skills = [0, 0, 0]  # Zhu 1 Fu 2
+
+        def addpoints():
+            for _ in range(level):
+                if skills[2] < (level) // 4 and skills[2] < 3:
+                    skills[2] += 1
+                elif skills[1] < (level + 1) // 2 and skills[1] < 6:
+                    skills[1] += 1
+                else:
+                    skills[0] += 1
+            assert sum(skills) == level, "Add points Wrong..."
+
+        addpoints()
+        self.skill_1 = Skill(skills[1])
+        self.skill_2 = Skill(skills[0])
         self.skill_ult = Skill(skills[2])
+        self.skill_passive = Skill(0)
 
         # initialization
         self.set_level(level)
-        self.add_equips(equips)
         self.initilize_all()
+        # Caution Maozi
+        self.add_equips(equips)
         # add equips
 
         print(self.__class__.__name__, "Lv", self.level, ": Power", self.power, "ExAttack: ", self.expower)
@@ -23,40 +38,55 @@ class Ake(Hero):
         self.print_info()
 
     def add_runes(self):
-        """Standard AKe Runes"""
-        self.exattack += 9
-        self.attack_speed += 10
-        self.critical_damage += 0.36
-        self.armor_penetration += 66
-        self.critical_chance += 0.07
+        """Standard Zhuge Runes"""
+        self.magic_penetration += 88
+        self.magic_vampire += 0.1
+        self.expower += 66
 
+        """My Runes"""
+        if False:
+            self.magic_vampire += 0
+            self.magic_penetration += 0
+            self.expower += 0
 
-    def basic_init_ake(self):
+    def print_info(self):
+        verbose_print("Level: {}, \n"
+                      "Power ({} + {}),\n "
+                      "Max HP ({} + {}),  Max MP ({} + {}),\n "
+                      "Armor ({} + {}),  Spell_resis ({} + {})\n"
+                      "Magic Penetration {}, {}%\n".format(self.level,
+                                                           self.power, self.expower,
+                                                           self.max_hp, self.ex_max_hp, self.max_mp, self.ex_max_mp,
+                                                           self.armor, self.exarmor, self.spell_resistance,
+                                                           self.exspell_resis,
+                                                           self.magic_penetration, self.magic_penetration_percent))
+
+    def basic_init(self):
         """With Runes"""
-        self.attack_1 = 177
-        self.attck_15 = 427
+        self.attack_1 = 156
+        self.attck_15 = 287
         self.attack_inc = 0
 
-        self.spell_power = 0
+        self.power_1 = 0
+        self.power_15 = 0
         self.power_inc = 0
 
-
         self.attack_speed_1 = 0
-        self.attack_speed_15 = 28
+        self.attack_speed_15 = 14
         self.as_inc = 0
 
         self.speed = 380
-        self.max_hp_1 = 3269
+        self.max_hp_1 = 3135
         self.max_hp_15 = 5968
         self.hp_inc = 0
 
-        self.max_mp_1 = 0
+        self.max_mp_1 = 490
         self.max_mp_15 = 0
         self.mp_inc = 0
 
         # Armor and spell resistance
-        self.armor_1 = 89
-        self.armor_15 = 349
+        self.armor_1 = 87
+        self.armor_15 = 330
         self.armor_inc = 0
 
         self.spell_resis_1 = 50
@@ -70,7 +100,7 @@ class Ake(Hero):
 
         # critical
         self.critical_chance = 0
-        self.critical_damage = 1.25
+        self.critical_damage = 2.0
 
         self.cd = 0
         # Blood sucking
@@ -86,62 +116,58 @@ class Ake(Hero):
         self.init_incs()
         self.init_state()
 
-    def init_skill_1(self):
-        ## Convenient to Calc Pojun
-        self.skill_1.trigger_times = 1
+    def init_passive_skill(self, level=0):
+        self.skill_passive.skill_level = 0
+        self.skill_passive.base_damage = 270
+        self.skill_passive.addition_by_power = 0.52
 
-        self.skill_1.base_damage = 175
-        self.skill_1.addition_by_skill_level = 25
-        self.skill_1.addition_by_attack = 0.65
+    def init_skill_1(self):
+        """30% multi"""
+        self.skill_1.base_damage = 500
+        self.skill_1.addition_by_skill_level = 60
+        self.skill_1.addition_by_power = 0.75
 
     def init_skill_2(self):
+        """50% multi"""
         self.skill_2.base_damage = 350
-        self.skill_2.addition_by_skill_level = 40
-        self.skill_2.addition_by_attack = 1.0
+        self.skill_2.addition_by_skill_level = 70
+        self.skill_2.addition_by_power = 0.52
 
     def init_skill_ult(self):
-        self.skill_ult.base_damage = 150
-        self.skill_ult.addition_by_skill_level = 25
-
-
-    def init_state(self):
-        """passive skill"""
-        super(Ake, self).init_state()
-        self.critical_damage += 0.5 * self.critical_chance
+        """1% sunshi => 2% damage"""
+        self.skill_ult.base_damage = 450
+        self.skill_ult.addition_by_skill_level = 150
+        self.skill_ult.addition_by_power = 0.5
 
     def passive_skill_function(self, damage):
-        # self.extra_critical_damage = 0.5 * self.critical_chance
-        # self.to_do_physical_damage *= (self.critical_damage + self.extra_critical_damage)
-        # if self.pojun_buff > 1.0:
-        #     verbose_print("Higher Damage with Pojun...")
-        #     damage = damage * 1.3
-        return damage * self.critical_damage
+        magic_damage = self.skill_passive.function(self)
+        verbose_print(
+            "[{}] Do skill_passive: Lv {} , damage: {}".format(self.__class__.__name__, self.skill_passive.skill_level,
+                                                               magic_damage))
+        return magic_damage
 
     def skill_1_function(self, enemy):
-        physical_damage = self.passive_skill_function(self.skill_1.function(self))
-        if enemy.bujiaxie_buff:
-            verbose_print(">>> Defend by Bujiaxie...")
-            physical_damage *= 0.85
+        magic_damage = self.skill_1.function(self)
         verbose_print("[{}] Do skill_1: Lv {} , damage: {}".format(self.__class__.__name__, self.skill_1.skill_level,
-                                                              physical_damage))
-        if self.moshi_buff:
-            print(">>> Moshi damage: {}".format(enemy.hp * 0.08))
-            physical_damage += enemy.hp * 0.08 / self.critical_damage
-
-        return physical_damage
+                                                                   magic_damage))
+        return magic_damage
 
     def skill_2_function(self):
-        physical_damage = self.passive_skill_function(self.skill_2.function(self))
+        magic_damage = self.skill_2.function(self)
         verbose_print("[{}] Do skill_2: Lv{} , damage:{}".format(self.__class__.__name__, self.skill_2.skill_level,
-                                                              physical_damage))
-        return physical_damage
+                                                                 magic_damage))
+        return magic_damage
 
-    def skill_ult_function(self):
-        inc_attack = self.skill_ult.base_damage + (
-                                                      self.skill_ult.skill_level - 1) * self.skill_ult.addition_by_skill_level
-        self.exattack += inc_attack
-        verbose_print("[{}] Do skill_ult Lv{} , increased attack: {}, "
-              "inc range: {}".format(self.__class__.__name__, self.skill_ult.skill_level, self.exattack+self.attack, inc_attack))
+    def skill_ult_function(self, enemy):
+        magic_damage = self.skill_ult.function(self)
+        verbose_print(
+            "[{}] Ult Origin Dmg: Lv{} , damage:{}".format(self.__class__.__name__, self.skill_ult.skill_level,
+                                                           magic_damage))
+        loss_per = (enemy.ex_max_hp + enemy.max_hp - enemy.hp) / (enemy.ex_max_hp + enemy.max_hp)
+        magic_damage *= (1.0 + (loss_per * 100 // 1) * 2 / 100)
+        verbose_print("[{}] Do skill_ult: Lv{} , damage:{}".format(self.__class__.__name__, self.skill_ult.skill_level,
+                                                                   magic_damage))
+        return magic_damage
 
     def equips_functions(self, enemy):
         if len(self.equips_funcs) > 0:
@@ -149,7 +175,7 @@ class Ake(Hero):
             for key, func in self.equips_funcs.iteritems():
                 if key == 'hero_attack' or 'zongshi_f':
                     self.to_do_physical_damage += self.passive_skill_function(func(self, enemy))
-                # elif key == 'zongshi_f':
+                    # elif key == 'zongshi_f':
                     # pass
                     # self.to_do_physical_damage += func(self, enemy)
                 else:
@@ -158,46 +184,34 @@ class Ake(Hero):
             pass
 
     def damage_combo(self, enemy):
-        # if self.calc_damage:
-        self.skill_ult_function()
-
-        damage = self.skill_2_function()
-        self.damage_combo_to_hero(enemy, damage)
-        ll(damage)
-
-        # Skill 1 Damage Twice
-        damage = self.skill_1_function(enemy)
-        self.damage_combo_to_hero(enemy, damage)
-        damage = self.skill_1_function(enemy)
+        damage = self.skill_ult_function(enemy)
         self.damage_combo_to_hero(enemy, damage)
 
-        damage = self.equips_functions(enemy)
-        self.damage_combo_to_hero(enemy, damage)
+        # damage = self.equips_functions(enemy)
+        # self.damage_combo_to_hero(enemy, damage)
         # self.passive_skill_function()
 
-        print("[{}] Total damage: {}".format(self.__class__.__name__, enemy.max_hp - enemy.hp))
+        # print("[{}] Total damage: {}".format(self.__class__.__name__, enemy.max_hp - enemy.hp))
 
         return self.to_do_physical_damage
 
     def damage_combo_to_hero(self, enemy, damage=0):
         assert isinstance(enemy, Hero), "Oh, {} is not I wanted .".format(type(enemy))
 
-        remain_armor = (enemy.armor + enemy.exarmor) * (1 - self.armor_penetration_percent) - self.armor_penetration
-        remain_armor = max(remain_armor,0)
-        physic_defence_percent = (remain_armor) / (remain_armor + enemy.defence_baseline)
-        verbose_print("{}'s Remain Armor: {}, defence_percent: {} ".format(enemy.__class__.__name__, remain_armor,
-                                                                   physic_defence_percent))
+        remain_resis = (enemy.spell_resistance + enemy.exspell_resis) * (
+        1 - self.magic_penetration_percent) - self.magic_penetration
+        remain_resis = max(remain_resis, 0)
+        magic_defence_percent = (remain_resis) / (remain_resis + enemy.defence_baseline)
+        verbose_print("{}'s Remain Resis: {}, defence_percent: {} ".format(enemy.__class__.__name__, remain_resis,
+                                                                           magic_defence_percent))
         if damage > 0:
-            received_damage = (1 - physic_defence_percent) * damage
+            received_damage = (1 - magic_defence_percent) * damage
         else:
-            received_damage = (1 - physic_defence_percent) * self.to_do_physical_damage
+            received_damage = (1 - magic_defence_percent) * self.to_do_physical_damage
 
-        # Pojun Buff
-        if enemy.hp / enemy.max_hp < 0.5 and self.pojun_buff:
-            received_damage *= 1.3
-            verbose_print(">>>> Po Jun <<<<")
         print("Did {} damage".format(received_damage, enemy.__class__.__name__))
 
         enemy.hp -= received_damage
-        print("{}'s Remaining HP : {}".format(enemy.__class__.__name__, progress_bar(enemy.hp, enemy.ex_max_mp+enemy.max_hp)))
+        print("{}'s Remaining HP : {}".format(enemy.__class__.__name__,
+                                              progress_bar(enemy.hp, enemy.ex_max_mp + enemy.max_hp)))
         self.to_do_physical_damage = 0

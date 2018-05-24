@@ -22,7 +22,7 @@ print("#############################################")
 # 3 2 1 Combo
 # Wujin 1 Heiqie 2  Zongshi 3 // + PingA
 # Pojun = 5
-ake_1 = Ake(12, [0,1,2], [2,3,1])
+ake_1 = Ake(12, [0,1,2])
 houyi_1 = Houyi(12, [11])
 # print(houyi_1.hp)
 damage = ake_1.damage_combo(houyi_1)
@@ -32,7 +32,7 @@ print("#############################################")
 # Bujiaxie
 # Wujin 1 Heiqie 2 Pojiagong 4  //+ PingA
 # Pojun = 5
-ake_2 = Ake(14, [0,1,2,4], [3,6,3])
+ake_2 = Ake(14, [0,1,2,4])
 houyi_2 = Houyi(14, [])
 # print(houyi_2.attack)
 damage = ake_2.damage_combo(houyi_2)
@@ -41,7 +41,7 @@ print("#############################################")
 # Bujiaxie
 # Wujin 1 Heiqie 2 //Pojiagong 4 Pojun 5  //+ PingA
 # Pojun = 5
-ake_2 = Ake(14, [0,1,2,5], [3,6,3])
+ake_2 = Ake(14, [0,1,2,5])
 houyi_2 = Houyi(14, [])
 # print(houyi_2.attack)
 damage = ake_2.damage_combo(houyi_2)
@@ -50,7 +50,7 @@ print("#############################################")
 # Bujiaxie
 # Wujin 1 Heiqie 2 //Pojiagong 4 Pojun 5  //+ PingA
 # Pojun = 5
-ake_2 = Ake(14, [1,2,3], [3,6,3])
+ake_2 = Ake(14, [1,2,3])
 houyi_2 = Houyi(14, [11])
 # print(houyi_2.attack)
 damage = ake_2.damage_combo(houyi_2)
